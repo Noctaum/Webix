@@ -1,0 +1,30 @@
+.greenButton .webixtype_base{
+	background-color: rgb(38, 161, 78);
+}
+
+.greenButton.webix_el_button button{
+   border:1px solid rgb(32, 133, 65);
+}
+
+.grayList .webix_view {
+	background-color: rgb(234, 234, 234);
+}
+
+.textCenter{
+	text-align: center;
+}
+
+.textGreen{
+	color: rgb(38, 161, 78);
+}
+
+.hover.webix_cell{
+  	background: rgba(255, 211, 0, 1);
+}
+
+.firstCol{
+	background: rgb(200, 220, 236);
+}
+.userList .webix_list_item:nth-child(-n+5){
+	background: rgba(255, 211, 0, 1);
+}
