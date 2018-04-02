@@ -1,45 +1,25 @@
-var list ={ 
-	gravity:1.5, 
-	view:"layout",
-	css: "grayList",
-	rows:[
-		{
-			view: "list",
-			id:"list",
-			select:true,
-			on:{
-		      	onAfterSelect:function(id){ 
-		        	$$(id).show();
-		        }
-		    },
-			data: ["Dashboard", "Users", "Products", "Locations"],
-		},
-		{},
-		{	
-			view:"label",
-			align:"center",
-			label: "<span class='webix_icon fa-check'></span>Connected", 
-			css: "textGreen"
-		}
-	]};
-
-var table = {
+var datatable = {
   	view: "datatable",
   	id:"movieData",
-  	gravity: 4,
   	url:"js/data/data.js",
     datatype:"json",
     select:true,
   	columns:[
-  	 	{id:"id", header:"Num", sort:"int", width: 50, css:"firstCol",css:{"text-align":"center"}},
-	    {id:"title", header: ["Title" ,{ content:"textFilter"}], sort:"string"},
-	    {id:"year", header: ["Year", { content:"textFilter"}], sort:"string",css:{"text-align":"center"}},
-	    {id:"votes", header:["Votes", { content:"textFilter"}], sort:"string",css:{"text-align":"center"}},
-	    {id:"rating", header:["Rating",{ content:"textFilter"}], sort:"string",css:{"text-align":"center"}},
-	    {id:"rank", header:["Rank",{ content:"textFilter"}], sort:"string",css:{"text-align":"center"}},
-	    {id:"trash", header:"Del", template:"{common.trashIcon()}", width: 40,css:{"text-align":"center"}}
-	    //css:{"text-align":"right"}
+  	 	{id:"id", header:"Num", sort:"int", width: 50, css:"firstCol",css:"textCenter"},
+	    {id:"title", header: ["Title" ,{ content:"textFilter"}], sort:"string", fillspace:true, minWidth:150},
+	    {id:"year", header:"Year", sort:"string",css:"textCenter"},
+	    {id:"votes", header:["Votes", { content:"textFilter"}], sort:"string",css:"textCenter"},
+	    {id:"rating", header:["Rating",{ content:"textFilter"}], sort:"string",css:"textCenter"},
+	    {id:"rank", header:["Rank",{ content:"textFilter"}], sort:"string",css:"textCenter"},
+	   	{id:"category", header:"Category", editor:"select", options:"js/extra-js/categories.js"},
+	    {id:"trash", header:"Del", template:"{common.trashIcon()}", width: 40,css:"textCenter"}
     ],
+    editable:true,
+    scheme:{
+    	$init:function(item){
+        	item.category = Math.ceil(Math.random()*(4));
+    	}
+    },
     scrollY:true,
     onClick:{
 	  	"fa-trash":function(e,id){
@@ -48,7 +28,30 @@ var table = {
             return false;
 	    }
 	},
-	 hover:"hover"
+	hover:"hover"
+};
+
+var table = {
+	view:"layout",
+	gravity: 4,
+	rows:[
+		{
+			view: "tabbar",
+			id:"tabbarTable",
+			options: [
+				{ value: "All", id: "allMovie"},
+	            { value: "Old", id: "oldMovie"},
+	            { value: "Modern", id: "modermMovie"},
+	            { value: "New", id: "newMovie"}
+        	],
+        	on:{
+        		onChange:function(){
+          			$$("movieData").filterByAll();
+        		}
+     		}
+		},
+		datatable
+	]	
 };
 
 var form = { 
@@ -68,17 +71,14 @@ var form = {
 	   	 		view:"button", 
 	   	 		label:"Add new", 
 	   	 		css:"greenButton",
-	   	 		click: function(){
-	    			if($$("movieForm").validate()){
-	    				let item = $$("movieForm").getValues();
-	    				for(let i in item) item[i]=item[i].replace(/<.*?>/g, '');
-	    				$$("movieData").add(item);
-	    				webix.message(
-				          {text:"Validation is successful",
-				           expire:0
-				        });
-	    			}
-	    		}
+  				click: function (){
+	  				var form = $$('movieForm');
+					if(form.isDirty()){
+						if(!form.validate())
+						return false;
+						form.save();
+					}
+				}
 	   	 	},
 	    	{ 	
 	    		view:"button", 
@@ -96,28 +96,13 @@ var form = {
             		})
 			    }
 	     	}
-		 ]},
-		 {cols:[
-	   	 	{ 
-	   	 		view:"button", 
-	   	 		label:"Edit", 
-	   	 		click: function(){
-	    			var sel = $$("movieData").getSelectedId();
-				    if(!sel) return;
-
-				    let itemNew = $$("movieForm").getValues();
-	    			for(let i in itemNew) itemNew[i]=itemNew[i].replace(/<.*?>/g, '');
-	    			var item = $$("movieData").getItem(sel);
-	    			for(let i in item) item[i]=itemNew[i];
-	    			$$("movieData").updateItem(sel, item);
-	    			webix.message(
-				        {text:"Validation is updated!",
-				        expire:0
-				    });
-	    		}
-	   	 	},
-		 ]},
-		 {}
+		]},
+		{},
+		{
+			view:"button", value:"Unselect", click:function(){
+                $$("movieData").unselectAll();
+            }
+        }
 	],
 	rules:{
 	 	title:webix.rules.isNotEmpty,
@@ -135,3 +120,9 @@ var form = {
       	}
 	},
 };
+			
+		
+
+
+
+

@@ -18,6 +18,31 @@ var bar = {
     	}]
 };
 
+var list ={ 
+  gravity:1.5, 
+  view:"layout",
+  css: "grayList",
+  rows:[
+    {
+      view: "list",
+      id:"list",
+      select:true,
+      on:{
+            onAfterSelect:function(id){ 
+              $$(id).show();
+            }
+        },
+      data: ["Dashboard", "Users", "Products", "Locations"],
+    },
+    {},
+    { 
+      view:"label",
+      align:"center",
+      label: "<span class='webix_icon fa-check'></span>Connected", 
+      css: "textGreen"
+    }
+  ]};
+
 var side = {
 	view:"layout",
 	cols:[
@@ -57,15 +82,10 @@ var pop = webix.ui({
 	}
 });
 
-$$("movieData").attachEvent("onAfterSelect", function(id){
-	$$("movieForm").setValues({
-		title: $$("movieData").getItem(id).title,
-		year: $$("movieData").getItem(id).year,
-		votes: $$("movieData").getItem(id).votes,
-		rating: $$("movieData").getItem(id).rating,
-		rank: $$("movieData").getItem(id).rank
-	});
-});
+// $$("movieData").attachEvent("onAfterSelect", function(id){
+// 	var item = $$("movieData").getItem(id)
+// 	$$("movieForm").setValues(item);
+// });
 
 $$("list").select("Dashboard");
 
@@ -75,4 +95,26 @@ $$("filterForUser").attachEvent("onTimedKeyPress",function(){
     return obj.name.toLowerCase().indexOf(value)==0;
   })
 });
+
+$$('movieForm').bind($$('movieData'));
+
+$$("movieData").registerFilter(
+  $$("tabbarTable"), 
+  {columnId:"year", compare:function(value, filter, item){
+    if(filter == "allMovie")  return 1; 
+    if(filter == "oldMovie")  return value <= 2000 ? true : false; 
+    if(filter == "modermMovie")  return value <= 1914 && value >= 1880 ? 1 : 0;
+    if(filter == "newMovie")  return value >= 2000 ? 1 : 0; 
+  }},
+  { 
+    getValue:function(node){
+      return node.getValue();
+    },
+    setValue:function(node, value){
+      node.setValue(value);
+    }
+  }
+);
+
+$$("userChart").sync($$("listOfUsers"));
 

@@ -1,9 +1,19 @@
+var countries =[
+	{ id:1, value:"Germany" },
+	{ id:2, value:"USA" },
+	{ id:3, value:"Canada" },
+	{ id:4, value:"France" },
+	{ id:5, value:"China" },
+	{ id:6, value:"Russia" },
+	{ id:7, value:"Italy" },
+	{ id:8, value:"Spain" }
+];
+
 var userList={
 	rows:[
 	 	{
 	 		cols:[
 				{
-					view:"toolbar",
 		     		view:"text", 
 		     		id:"filterForUser",
 		     		placeholder:"Type to filter..",
@@ -26,13 +36,29 @@ var userList={
 		 			click: ()=>{
 						$$("listOfUsers").sort("#name#", "desc");
 					}
+		 		},
+		 		{
+		 			view:"button", 
+		 			id:"userAdd", 
+		 			label:"Add new", 
+		 			gravity:1,
+		 			click: ()=>{
+		 				//Остановился здесь!!!
+						$$("listOfUsers").add({
+							name: "Jeck Dickens",
+							age: Math.round(Math.random()*60)+10,
+							country: countries[Math.ceil(Math.random()*7)].value,
+						},0);
+					}
 		 		}
 	 		]
 	    },
 		{
-			view:"list",
+			view:"editlist",
 			id:"listOfUsers",
-			css:"userList",
+			editable:true,
+			editor:"text",
+ 			editValue:"name",
 			template:"#id#. <b>#name#</b> from #country# <span class='webix_icon fa-trash'></span>",
 			url:"js/data/users.js",
 		    datatype:"json",
@@ -42,23 +68,65 @@ var userList={
 	            	webix.message("Deleted");
 	            	return false;
 	    		}
-			}
+			},
+			scheme:{
+    			$init:function(item){
+    				if(item.age < 26) item.$css="youngUser";
+    			},
+    			$change:function(item){
+
+            		if (item.name === "") {
+            			item.name = "nameless User";
+            			item.$css="emptyUser";
+            		} else{
+            			item.$css="fullUser";
+            		}
+             	}
+    		},	
+    //  		rules:{
+	//     		name:function(value){
+    //      			value === "" ? false : true;
+    //    			},
+	// 		},
+			on:{
+		    	onItemRender:function(){
+					$$("userChart").group({ 
+		        		by:"country", 
+		        		map:{ 
+		            		age:["age", "count"]
+		            	}
+		        	});	
+				},			
+			},
 		}
 	]
  
 };
 
+
+webix.protoUI({
+    name:"editlist"
+}, webix.EditAbility, webix.ui.list);
+
 var userChart={
 	view:"chart",
-    url:"js/data/users.js",
-    datatype:"json",
+    id:"userChart",
     type:"bar",
-    value:"#age#",
+    value: '#age#',
     border:true,
+    yAxis:{},
     xAxis:{
-        template:"#age#",
-        title:"Age"
+        template:"#country#",
+        title:"Country"
     },
+	// scheme:{
+ //        $group({
+ //            by:"country",
+ //            map:{
+ //                age:["age","count"] 
+ //            } 
+ //        })
+ //    }
 };
 
 var users = {
