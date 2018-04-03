@@ -74,7 +74,8 @@ var form = {
 		{view:"text", label:"Votes", name:"votes", invalidMessage:"Votes shouldn't be bigger than 100000!"},
 		{view:"text", label:"Rating", name:"rating", invalidMessage:"Rating shouldn't be empty or be 0!"},
 		{view:"text", label:"Rank", name:"rank", invalidMessage:"Rating shouldn't be empty"},
-		{view:"richselect", label:"Richselect", name:"categoryId", id:"categoryId", options:categories.data},
+		{view:"combo", label:"Richselect", name:"categoryId", id:"categoryId", options:{data:categories}},
+		//options:categories.data
 		{cols:[
 	   	 	{ 
 	   	 		view:"button", 

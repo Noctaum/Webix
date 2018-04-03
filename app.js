@@ -132,4 +132,4 @@ $$("userChart").sync($$("listOfUsers"), function(){
 $$("categoriesData").sync(categories);
 //$$("categoryId").sync(categories);
 //$$("formCategory").sync(categories);
-$$("categoryId").getList().data.sync(categories);
+//$$("categoryId").getList().data.sync(categories);
