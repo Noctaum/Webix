@@ -1,9 +1,13 @@
+var categories = new webix.DataCollection({
+    url:"js/extra-js/categories.js" 
+});
+
 var datatable = {
   	view: "datatable",
   	id:"movieData",
   	url:"js/data/data.js",
     datatype:"json",
-    select:true,
+    select:"row",
   	columns:[
   	 	{id:"id", header:"Num", sort:"int", width: 50, css:"firstCol",css:"textCenter"},
 	    {id:"title", header: ["Title" ,{ content:"textFilter"}], sort:"string", fillspace:true, minWidth:150},
@@ -11,13 +15,14 @@ var datatable = {
 	    {id:"votes", header:["Votes", { content:"textFilter"}], sort:"string",css:"textCenter"},
 	    {id:"rating", header:["Rating",{ content:"textFilter"}], sort:"string",css:"textCenter"},
 	    {id:"rank", header:["Rank",{ content:"textFilter"}], sort:"string",css:"textCenter"},
-	   	{id:"category", header:"Category", editor:"select", options:"js/extra-js/categories.js"},
+	   	{id:"categoryId", header:"Category", editor:"select", options:categories},
 	    {id:"trash", header:"Del", template:"{common.trashIcon()}", width: 40,css:"textCenter"}
     ],
     editable:true,
     scheme:{
     	$init:function(item){
-        	item.category = Math.ceil(Math.random()*(4));
+        	item.categoryId = Math.ceil(Math.random()*(4));
+        	//categories.data.pull[Math.ceil(Math.random()*(4))].value;
     	}
     },
     scrollY:true,
@@ -28,7 +33,10 @@ var datatable = {
             return false;
 	    }
 	},
-	hover:"hover"
+	hover:"hover",
+	//save: "https://docs.webix.com/samples/40_serverside/01_php_vanila/server/datatable_save.php"
+	save: "rest->https://docs.webix.com/samples/40_serverside/03_php_custom/server/datatable_rest.php"
+
 };
 
 var table = {
@@ -60,12 +68,13 @@ var form = {
 	gravity: 2,
 	scroll:false, 
 	elements:[
-		{type:"section", template:"EDIT FILMS" },
+		{type:"section", template:"edit films" },
 		{view:"text", label:"Title", name:"title", invalidMessage:"Title shouldn't be empty!"},
 		{view:"text", label:"Year", name:"year", invalidMessage:"Year should be '> 1970', and '< now'!"},
 		{view:"text", label:"Votes", name:"votes", invalidMessage:"Votes shouldn't be bigger than 100000!"},
 		{view:"text", label:"Rating", name:"rating", invalidMessage:"Rating shouldn't be empty or be 0!"},
 		{view:"text", label:"Rank", name:"rank", invalidMessage:"Rating shouldn't be empty"},
+		{view:"richselect", label:"Richselect", name:"categoryId", id:"categoryId", options:categories.data},
 		{cols:[
 	   	 	{ 
 	   	 		view:"button", 

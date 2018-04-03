@@ -32,7 +32,7 @@ var list ={
               $$(id).show();
             }
         },
-      data: ["Dashboard", "Users", "Products", "Locations"],
+      data: ["Dashboard", "Users", "Products", "Admit"],
     },
     {},
     { 
@@ -52,12 +52,16 @@ var side = {
 			{ id:"Dashboard", cols:[table, form]},
 			users,
 			products,
-			{ id:"Locations",template:"Template for Locations view"}
+			admit
 			],
 		gravity: 6
 		}
 	]
 };
+
+webix.protoUI({
+    name:"editlist"
+}, webix.EditAbility, webix.ui.list);
 
 webix.ui({
 	view:"layout",
@@ -116,5 +120,16 @@ $$("movieData").registerFilter(
   }
 );
 
-$$("userChart").sync($$("listOfUsers"));
+$$("userChart").sync($$("listOfUsers"), function(){
+    this.group({
+        by:"country",
+        map:{
+            age:["age", "count"]
+        }
+    });
+});
 
+$$("categoriesData").sync(categories);
+//$$("categoryId").sync(categories);
+//$$("formCategory").sync(categories);
+$$("categoryId").getList().data.sync(categories);

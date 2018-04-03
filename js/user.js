@@ -1,13 +1,10 @@
-var countries =[
-	{ id:1, value:"Germany" },
-	{ id:2, value:"USA" },
-	{ id:3, value:"Canada" },
-	{ id:4, value:"France" },
-	{ id:5, value:"China" },
-	{ id:6, value:"Russia" },
-	{ id:7, value:"Italy" },
-	{ id:8, value:"Spain" }
-];
+var countries = new webix.DataCollection({
+    url:"js/extra-js/countries.js" 
+});
+
+var usersCollection = new webix.DataCollection({
+    url:"js/data/users.js" 
+});
 
 var userList={
 	rows:[
@@ -43,11 +40,10 @@ var userList={
 		 			label:"Add new", 
 		 			gravity:1,
 		 			click: ()=>{
-		 				//Остановился здесь!!!
 						$$("listOfUsers").add({
 							name: "Jeck Dickens",
 							age: Math.round(Math.random()*60)+10,
-							country: countries[Math.ceil(Math.random()*7)].value,
+							country: countries.data.pull[Math.ceil(Math.random()*7)].value,
 						},0);
 					}
 		 		}
@@ -60,8 +56,7 @@ var userList={
 			editor:"text",
  			editValue:"name",
 			template:"#id#. <b>#name#</b> from #country# <span class='webix_icon fa-trash'></span>",
-			url:"js/data/users.js",
-		    datatype:"json",
+		    data:usersCollection,
 		    onClick:{
 	  			"fa-trash":function(e,id){
 	           		this.remove(id);
@@ -74,7 +69,6 @@ var userList={
     				if(item.age < 26) item.$css="youngUser";
     			},
     			$change:function(item){
-
             		if (item.name === "") {
             			item.name = "nameless User";
             			item.$css="emptyUser";
@@ -103,30 +97,17 @@ var userList={
  
 };
 
-
-webix.protoUI({
-    name:"editlist"
-}, webix.EditAbility, webix.ui.list);
-
 var userChart={
 	view:"chart",
     id:"userChart",
     type:"bar",
-    value: '#age#',
+    value: "#age#",
     border:true,
     yAxis:{},
     xAxis:{
         template:"#country#",
         title:"Country"
     },
-	// scheme:{
- //        $group({
- //            by:"country",
- //            map:{
- //                age:["age","count"] 
- //            } 
- //        })
- //    }
 };
 
 var users = {
